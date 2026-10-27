@@ -2,8 +2,9 @@
 Botplugin: lägg till och ta bort bots i lobbyn med chattkommandon.
 
 Bots är låtsasspelare som servern styr. De är bra för att testa saker
-när man inte har så många riktiga spelare. Just nu står de still i
-lobbyn, men de har namn och färg och syns för alla som vanliga spelare.
+när man inte har så många riktiga spelare. De står still, men de har namn
+och färg och syns för alla som vanliga spelare. Under en runda gör de sina
+uppdrag (om de inte är impostors) och röstar skip på möten.
 
 Kommandon (skrivs i chatten i lobbyn):
 
@@ -14,14 +15,15 @@ Kommandon (skrivs i chatten i lobbyn):
 Among Us chatt låter en inte skriva understreck, så kommandona använder
 mellanslag. Varianter som "/botadd" och "/bot-add" fungerar också.
 
-Kräver Emergency Meeting version 0.6.0 eller nyare.
+Kräver Emergency Meeting version 0.6.0 eller nyare. Med 0.7.0 eller nyare
+gör botarna uppdrag och röstar.
 """
 
 import logging
 import re
 
 NAME = "Botplugin"
-VERSION = "1.1"
+VERSION = "1.2"
 AUTHOR = "CEMP"
 DESCRIPTION = "/bot add, /bot remove och /help botplugin"
 
@@ -29,13 +31,17 @@ log = logging.getLogger("plugin.botplugin")
 
 BOT_PREFIX = "Bot_"
 
+# Ska botarna göra uppdrag och rösta skip under en runda? (True/False)
+BOTS_PLAY_ALONG = True
+
 HELP = [
     "--- Botplugin ---",
     "/bot add : lägger till en bot (Bot_1, Bot_2 ...)",
     "/bot remove : tar bort den senaste boten",
     "/help botplugin : visar den här hjälpen",
     "Bara värden kan lägga till och ta bort bots.",
-    "Bots står still i lobbyn men räknas som spelare.",
+    "Bots står still men räknas som spelare.",
+    "I en runda gör de uppdrag och röstar skip.",
 ]
 
 
@@ -75,7 +81,10 @@ def add_bot(lobby, player):
         return
 
     name = next_bot_name(lobby)
-    bot = lobby.add_bot(name)
+    try:
+        bot = lobby.add_bot(name, do_tasks=BOTS_PLAY_ALONG)
+    except TypeError:
+        bot = lobby.add_bot(name)  # äldre server utan uppdrag för bots
     if bot is None:
         if lobby.is_started:
             player.send_chat("Det går inte att lägga till bots under en runda.")

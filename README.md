@@ -20,12 +20,16 @@ Skriv kommandona i chatten när du är i en lobby:
 Among Us chatt låter en inte skriva understreck, så kommandona har
 mellanslag. `/botadd` och `/bot-add` fungerar också.
 
-Bara värden kan lägga till och ta bort bots. Bots står still i lobbyn men
-har namn och färg, räknas som spelare och syns för alla. De kan inte bli
+Bara värden kan lägga till och ta bort bots. Bots står still men har namn
+och färg, räknas som spelare och syns för alla. Under en runda gör de sina
+uppdrag (om de inte är impostors) och röstar skip på möten, så att man kan
+testa hela matcher. Stäng av det med `BOTS_PLAY_ALONG = False` överst i
+`botplugin.py`. De kan inte bli
 värd: om värden lämnar blir en riktig spelare ny värd, och om bara bots är
 kvar stängs spelet.
 
-Kräver Emergency Meeting **0.6.0** eller nyare.
+Kräver Emergency Meeting **0.6.0** eller nyare (**0.7.0** för att botarna
+ska göra uppdrag och rösta).
 
 ## Installera
 
