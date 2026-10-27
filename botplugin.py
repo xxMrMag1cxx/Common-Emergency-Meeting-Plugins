@@ -7,17 +7,23 @@ lobbyn, men de har namn och färg och syns för alla som vanliga spelare.
 
 Kommandon (skrivs i chatten i lobbyn):
 
-    /bot_add          lägger till en bot (Bot_1, Bot_2, ...)   bara värden
-    /bot_remove       tar bort den senaste boten                bara värden
+    /bot add          lägger till en bot (Bot_1, Bot_2, ...)   bara värden
+    /bot remove       tar bort den senaste boten                bara värden
     /help botplugin   visar hjälpen
+
+Among Us chatt låter en inte skriva understreck, så kommandona använder
+mellanslag. Varianter som "/botadd" och "/bot-add" fungerar också.
 
 Kräver Emergency Meeting version 0.6.0 eller nyare.
 """
 
 import logging
+import re
 
 NAME = "Botplugin"
-DESCRIPTION = "/bot_add, /bot_remove och /help botplugin"
+VERSION = "1.1"
+AUTHOR = "CEMP"
+DESCRIPTION = "/bot add, /bot remove och /help botplugin"
 
 log = logging.getLogger("plugin.botplugin")
 
@@ -25,8 +31,8 @@ BOT_PREFIX = "Bot_"
 
 HELP = [
     "--- Botplugin ---",
-    "/bot_add : lägger till en bot (Bot_1, Bot_2 ...)",
-    "/bot_remove : tar bort den senaste boten",
+    "/bot add : lägger till en bot (Bot_1, Bot_2 ...)",
+    "/bot remove : tar bort den senaste boten",
     "/help botplugin : visar den här hjälpen",
     "Bara värden kan lägga till och ta bort bots.",
     "Bots står still i lobbyn men räknas som spelare.",
@@ -34,22 +40,30 @@ HELP = [
 
 
 def on_chat(lobby, player, text):
-    command = text.strip().lower()
+    command = simplify(text)
 
-    if command == "/help botplugin":
+    if command == "/helpbotplugin":
         for line in HELP:
             player.send_chat(line)
         return False  # visa inte kommandot för de andra
 
-    if command == "/bot_add":
+    if command == "/botadd":
         add_bot(lobby, player)
         return False
 
-    if command == "/bot_remove":
+    if command == "/botremove":
         remove_bot(lobby, player)
         return False
 
     return True  # vanliga meddelanden skickas vidare som vanligt
+
+
+def simplify(text):
+    """
+    Gör om t.ex. "/Bot Add", "/bot-add" och "/bot_add" till "/botadd",
+    så att det inte spelar någon roll hur man skriver.
+    """
+    return re.sub(r"[\s_\-]+", "", text.strip().lower())
 
 
 def add_bot(lobby, player):

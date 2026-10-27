@@ -7,15 +7,18 @@ vår egen Among Us-server.
 
 | Fil | Vad den gör | Kommandon |
 |-----|-------------|-----------|
-| `botplugin.py` | Lägger till bots (låtsasspelare) i lobbyn, bra för att testa | `/bot_add`, `/bot_remove`, `/help botplugin` |
+| `botplugin.py` | Lägger till bots (låtsasspelare) i lobbyn, bra för att testa | `/bot add`, `/bot remove`, `/help botplugin` |
 
 ### Botplugin
 
 Skriv kommandona i chatten när du är i en lobby:
 
-- **`/bot_add`** lägger till en bot. Den första heter `Bot_1`, nästa `Bot_2` och så vidare.
-- **`/bot_remove`** tar bort den senaste boten.
+- **`/bot add`** lägger till en bot. Den första heter `Bot_1`, nästa `Bot_2` och så vidare.
+- **`/bot remove`** tar bort den senaste boten.
 - **`/help botplugin`** visar hjälpen i chatten.
+
+Among Us chatt låter en inte skriva understreck, så kommandona har
+mellanslag. `/botadd` och `/bot-add` fungerar också.
 
 Bara värden kan lägga till och ta bort bots. Bots står still i lobbyn men
 har namn och färg, räknas som spelare och syns för alla. De kan inte bli
