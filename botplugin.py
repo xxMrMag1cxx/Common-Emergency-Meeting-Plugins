@@ -2,9 +2,10 @@
 Botplugin: lägg till och ta bort bots i lobbyn med chattkommandon.
 
 Bots är låtsasspelare som servern styr. De är bra för att testa saker
-när man inte har så många riktiga spelare. De står still, men de har namn
-och färg och syns för alla som vanliga spelare. Under en runda gör de sina
-uppdrag (om de inte är impostors) och röstar skip på möten.
+när man inte har så många riktiga spelare. De har namn och färg och syns
+för alla som vanliga spelare. De går runt i lobbyn och på kartan. Under en
+runda går de till sina uppdrag och gör dem (impostor-bots låtsas bara) och
+röstar skip på möten när diskussionstiden är slut.
 
 Kommandon (skrivs i chatten i lobbyn):
 
@@ -16,14 +17,14 @@ Among Us chatt låter en inte skriva understreck, så kommandona använder
 mellanslag. Varianter som "/botadd" och "/bot-add" fungerar också.
 
 Kräver Emergency Meeting version 0.6.0 eller nyare. Med 0.7.0 eller nyare
-gör botarna uppdrag och röstar.
+gör botarna uppdrag och röstar, och med 0.8.0 eller nyare går de runt.
 """
 
 import logging
 import re
 
 NAME = "Botplugin"
-VERSION = "1.2"
+VERSION = "1.3"
 AUTHOR = "CEMP"
 DESCRIPTION = "/bot add, /bot remove och /help botplugin"
 
@@ -34,14 +35,17 @@ BOT_PREFIX = "Bot_"
 # Ska botarna göra uppdrag och rösta skip under en runda? (True/False)
 BOTS_PLAY_ALONG = True
 
+# Ska botarna gå runt? (True/False) Med False står de still.
+BOTS_WALK = True
+
 HELP = [
     "--- Botplugin ---",
     "/bot add : lägger till en bot (Bot_1, Bot_2 ...)",
     "/bot remove : tar bort den senaste boten",
     "/help botplugin : visar den här hjälpen",
     "Bara värden kan lägga till och ta bort bots.",
-    "Bots står still men räknas som spelare.",
-    "I en runda gör de uppdrag och röstar skip.",
+    "Bots går runt och räknas som spelare.",
+    "I en runda går de till sina uppdrag och röstar skip.",
 ]
 
 
@@ -82,9 +86,12 @@ def add_bot(lobby, player):
 
     name = next_bot_name(lobby)
     try:
-        bot = lobby.add_bot(name, do_tasks=BOTS_PLAY_ALONG)
+        bot = lobby.add_bot(name, do_tasks=BOTS_PLAY_ALONG, walk=BOTS_WALK)
     except TypeError:
-        bot = lobby.add_bot(name)  # äldre server utan uppdrag för bots
+        try:
+            bot = lobby.add_bot(name, do_tasks=BOTS_PLAY_ALONG)  # server äldre än 0.8.0
+        except TypeError:
+            bot = lobby.add_bot(name)  # server äldre än 0.7.0
     if bot is None:
         if lobby.is_started:
             player.send_chat("Det går inte att lägga till bots under en runda.")
