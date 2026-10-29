@@ -1,7 +1,8 @@
 # Common Emergency Meeting Plugins (CEMP)
 
-Plugins for [Emergency Meeting](https://github.com/xxMrMag1cxx/Emergency-Meeting),
-our own Among Us server.
+Ready-made plugins for [Emergency Meeting](https://github.com/xxMrMag1cxx/Emergency-Meeting),
+an Among Us server you run on your own Mac. Get the server itself from
+[Emergency Meeting's releases](https://github.com/xxMrMag1cxx/Emergency-Meeting/releases).
 
 ## Plugins
 
@@ -69,3 +70,14 @@ How plugins work, which events there are and what a plugin can do is in
 Put new plugins as their own `.py` files here in the repo and add them to
 the table above. Write everything in English, and add Swedish translations
 of the log messages in a `TRANSLATIONS` dictionary (see botplugin.py).
+
+Found a bug or have an idea for a plugin?
+[Open an issue](https://github.com/xxMrMag1cxx/Common-Emergency-Meeting-Plugins/issues).
+
+## License
+
+The plugins are free software under the [GNU General Public License v3.0](LICENSE),
+the same license as Emergency Meeting.
+
+CEMP is a fan project and has nothing to do with Innersloth. Among Us is a
+trademark of Innersloth LLC.
