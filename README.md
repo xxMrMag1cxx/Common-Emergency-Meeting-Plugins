@@ -74,6 +74,13 @@ of the log messages in a `TRANSLATIONS` dictionary (see botplugin.py).
 Found a bug or have an idea for a plugin?
 [Open an issue](https://github.com/xxMrMag1cxx/Common-Emergency-Meeting-Plugins/issues).
 
+## Made with AI
+
+CEMP was made with the help of AI. Most of the code and the texts (including
+this README) were written by [Claude](https://www.anthropic.com/claude), an AI
+assistant made by Anthropic, based on our ideas, tests and feedback. We say
+this so that nobody is misled about how the project was made.
+
 ## License
 
 The plugins are free software under the [GNU General Public License v3.0](LICENSE),
