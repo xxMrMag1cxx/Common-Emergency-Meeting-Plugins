@@ -1,52 +1,65 @@
 """
-Botplugin: lägg till och ta bort bots i lobbyn med chattkommandon.
+Botplugin: add and remove bots in the lobby with chat commands.
 
-Bots är låtsasspelare som servern styr. De är bra för att testa saker
-när man inte har så många riktiga spelare. De har namn och färg och syns
-för alla som vanliga spelare. De går runt i lobbyn och på kartan. Under en
-runda går de till sina uppdrag och gör dem (impostor-bots låtsas bara) och
-röstar skip på möten när diskussionstiden är slut.
+Bots are pretend players that the server controls. They are good for testing
+things when you don't have that many real players. They have a name and a
+color and show up for everyone like ordinary players. They walk around in
+the lobby and on the map. During a round they walk to their tasks and do
+them (impostor bots only pretend) and vote skip in meetings when the
+discussion time is over.
 
-Kommandon (skrivs i chatten i lobbyn):
+Commands (typed in the chat in the lobby):
 
-    /bot add          lägger till en bot (Bot_1, Bot_2, ...)   bara värden
-    /bot remove       tar bort den senaste boten                bara värden
-    /help botplugin   visar hjälpen
+    /bot add          adds a bot (Bot_1, Bot_2, ...)   only the host
+    /bot remove       removes the latest bot           only the host
+    /help botplugin   shows the help
 
-Among Us chatt låter en inte skriva understreck, så kommandona använder
-mellanslag. Varianter som "/botadd" och "/bot-add" fungerar också.
+Among Us's chat doesn't let you type underscores, so the commands use
+spaces. Variants like "/botadd" and "/bot-add" work too.
 
-Kräver Emergency Meeting version 0.6.0 eller nyare. Med 0.7.0 eller nyare
-gör botarna uppdrag och röstar, och med 0.8.0 eller nyare går de runt.
+Requires Emergency Meeting version 0.6.0 or newer. With 0.7.0 or newer the
+bots do tasks and vote, and with 0.8.0 or newer they walk around. With
+0.12.1 or newer the server's Terminal window shows the log messages in
+Swedish if the server's language is Swedish (see TRANSLATIONS below).
 """
 
 import logging
 import re
 
 NAME = "Botplugin"
-VERSION = "1.3"
+VERSION = "1.4"
 AUTHOR = "CEMP"
-DESCRIPTION = "/bot add, /bot remove och /help botplugin"
+DESCRIPTION = "/bot add, /bot remove and /help botplugin"
 
 log = logging.getLogger("plugin.botplugin")
 
 BOT_PREFIX = "Bot_"
 
-# Ska botarna göra uppdrag och rösta skip under en runda? (True/False)
+# Should the bots do tasks and vote skip during a round? (True/False)
 BOTS_PLAY_ALONG = True
 
-# Ska botarna gå runt? (True/False) Med False står de still.
+# Should the bots walk around? (True/False) With False they stand still.
 BOTS_WALK = True
 
 HELP = [
     "--- Botplugin ---",
-    "/bot add : lägger till en bot (Bot_1, Bot_2 ...)",
-    "/bot remove : tar bort den senaste boten",
-    "/help botplugin : visar den här hjälpen",
-    "Bara värden kan lägga till och ta bort bots.",
-    "Bots går runt och räknas som spelare.",
-    "I en runda går de till sina uppdrag och röstar skip.",
+    "/bot add : adds a bot (Bot_1, Bot_2 ...)",
+    "/bot remove : removes the latest bot",
+    "/help botplugin : shows this help",
+    "Only the host can add and remove bots.",
+    "Bots walk around and count as players.",
+    "In a round they walk to their tasks and vote skip.",
 ]
+
+# Translations for the server's Terminal window (only the log messages and
+# DESCRIPTION, the chat messages above are always in English).
+TRANSLATIONS = {
+    "sv": {
+        "/bot add, /bot remove and /help botplugin": "/bot add, /bot remove och /help botplugin",
+        "%s added %s to %s": "%s lade till %s i %s",
+        "%s removed %s from %s": "%s tog bort %s i %s",
+    },
+}
 
 
 def on_chat(lobby, player, text):
@@ -55,7 +68,7 @@ def on_chat(lobby, player, text):
     if command == "/helpbotplugin":
         for line in HELP:
             player.send_chat(line)
-        return False  # visa inte kommandot för de andra
+        return False  # don't show the command to the others
 
     if command == "/botadd":
         add_bot(lobby, player)
@@ -65,23 +78,23 @@ def on_chat(lobby, player, text):
         remove_bot(lobby, player)
         return False
 
-    return True  # vanliga meddelanden skickas vidare som vanligt
+    return True  # ordinary messages are passed on as usual
 
 
 def simplify(text):
     """
-    Gör om t.ex. "/Bot Add", "/bot-add" och "/bot_add" till "/botadd",
-    så att det inte spelar någon roll hur man skriver.
+    Turns for example "/Bot Add", "/bot-add" and "/bot_add" into "/botadd",
+    so that it doesn't matter how you type it.
     """
     return re.sub(r"[\s_\-]+", "", text.strip().lower())
 
 
 def add_bot(lobby, player):
     if not player.is_host:
-        player.send_chat("Bara värden kan lägga till bots.")
+        player.send_chat("Only the host can add bots.")
         return
     if not hasattr(lobby, "add_bot"):
-        player.send_chat("Servern är för gammal för bots. Uppdatera Emergency Meeting.")
+        player.send_chat("The server is too old for bots. Update Emergency Meeting.")
         return
 
     name = next_bot_name(lobby)
@@ -89,41 +102,41 @@ def add_bot(lobby, player):
         bot = lobby.add_bot(name, do_tasks=BOTS_PLAY_ALONG, walk=BOTS_WALK)
     except TypeError:
         try:
-            bot = lobby.add_bot(name, do_tasks=BOTS_PLAY_ALONG)  # server äldre än 0.8.0
+            bot = lobby.add_bot(name, do_tasks=BOTS_PLAY_ALONG)  # server older than 0.8.0
         except TypeError:
-            bot = lobby.add_bot(name)  # server äldre än 0.7.0
+            bot = lobby.add_bot(name)  # server older than 0.7.0
     if bot is None:
         if lobby.is_started:
-            player.send_chat("Det går inte att lägga till bots under en runda.")
+            player.send_chat("Bots can't be added during a round.")
         else:
-            player.send_chat("Det gick inte att lägga till en bot. Är lobbyn full?")
+            player.send_chat("A bot could not be added. Is the lobby full?")
         return
 
-    # Spelet visar själv "Bot_1 joined the game", så vi behöver inte skriva något.
-    log.info("%s lade till %s i %s", player.name, name, lobby.code)
+    # The game shows "Bot_1 joined the game" by itself, so we don't need to write anything.
+    log.info("%s added %s to %s", player.name, name, lobby.code)
 
 
 def remove_bot(lobby, player):
     if not player.is_host:
-        player.send_chat("Bara värden kan ta bort bots.")
+        player.send_chat("Only the host can remove bots.")
         return
     if not hasattr(lobby, "remove_bot"):
-        player.send_chat("Servern är för gammal för bots. Uppdatera Emergency Meeting.")
+        player.send_chat("The server is too old for bots. Update Emergency Meeting.")
         return
 
     bots = lobby.bots
     if not bots:
-        player.send_chat("Det finns inga bots att ta bort.")
+        player.send_chat("There are no bots to remove.")
         return
 
     bot = bots[-1]
     name = bot.name
     lobby.remove_bot(bot)
-    log.info("%s tog bort %s i %s", player.name, name, lobby.code)
+    log.info("%s removed %s from %s", player.name, name, lobby.code)
 
 
 def next_bot_name(lobby):
-    """Bot_1, Bot_2, ... Tar det lägsta lediga numret."""
+    """Bot_1, Bot_2, ... Takes the lowest free number."""
     taken = {p.name for p in lobby.player_list}
     number = 1
     while f"{BOT_PREFIX}{number}" in taken:

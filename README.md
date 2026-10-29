@@ -1,49 +1,52 @@
 # Common Emergency Meeting Plugins (CEMP)
 
-Plugins till [Emergency Meeting](https://github.com/xxMrMag1cxx/Emergency-Meeting),
-vår egen Among Us-server.
+Plugins for [Emergency Meeting](https://github.com/xxMrMag1cxx/Emergency-Meeting),
+our own Among Us server.
 
 ## Plugins
 
-| Fil | Vad den gör | Kommandon |
-|-----|-------------|-----------|
-| `botplugin.py` | Lägger till bots (låtsasspelare) i lobbyn, bra för att testa | `/bot add`, `/bot remove`, `/help botplugin` |
+| File | What it does | Commands |
+|------|--------------|----------|
+| `botplugin.py` | Adds bots (pretend players) to the lobby, good for testing | `/bot add`, `/bot remove`, `/help botplugin` |
 
 ### Botplugin
 
-Skriv kommandona i chatten när du är i en lobby:
+Type the commands in the chat when you are in a lobby:
 
-- **`/bot add`** lägger till en bot. Den första heter `Bot_1`, nästa `Bot_2` och så vidare.
-- **`/bot remove`** tar bort den senaste boten.
-- **`/help botplugin`** visar hjälpen i chatten.
+- **`/bot add`** adds a bot. The first one is called `Bot_1`, the next `Bot_2` and so on.
+- **`/bot remove`** removes the latest bot.
+- **`/help botplugin`** shows the help in the chat.
 
-Among Us chatt låter en inte skriva understreck, så kommandona har
-mellanslag. `/botadd` och `/bot-add` fungerar också.
+Among Us's chat doesn't let you type underscores, so the commands have
+spaces. `/botadd` and `/bot-add` work too.
 
-Bara värden kan lägga till och ta bort bots. Bots har namn och färg,
-räknas som spelare och syns för alla. De går runt i lobbyn och på kartan.
-Under en runda går de till sina uppdrag och gör dem på plats (impostor-bots
-låtsas bara), och på möten röstar de skip när diskussionstiden är slut. Så
-kan man testa hela matcher, och öva på att döda som impostor.
+Only the host can add and remove bots. Bots have a name and a color, count
+as players and show up for everyone. They walk around in the lobby and on
+the map. During a round they walk to their tasks and do them on the spot
+(impostor bots only pretend), and in meetings they vote skip when the
+discussion time is over. That way you can test whole matches, and practice
+killing as an impostor.
 
-Överst i `botplugin.py` finns två inställningar:
+At the top of `botplugin.py` there are two settings:
 
-- `BOTS_PLAY_ALONG = False`: botarna gör inga uppdrag och röstar inte.
-- `BOTS_WALK = False`: botarna står still.
+- `BOTS_PLAY_ALONG = False`: the bots don't do tasks and don't vote.
+- `BOTS_WALK = False`: the bots stand still.
 
-Bots kan inte bli värd: om värden lämnar blir en riktig spelare ny värd, och
-om bara bots är kvar stängs spelet.
+Bots can't become the host: if the host leaves, a real player becomes the new
+host, and if only bots are left the game closes.
 
-Kräver Emergency Meeting **0.6.0** eller nyare (**0.7.0** för att botarna
-ska göra uppdrag och rösta, **0.8.0** för att de ska gå runt).
+Requires Emergency Meeting **0.6.0** or newer (**0.7.0** for the bots to do
+tasks and vote, **0.8.0** for them to walk around). With **0.12.1** or newer
+the plugin's log messages are in Swedish in the server's Terminal window if
+the server's language is Swedish.
 
-## Installera
+## Installing
 
-1. Klicka på den gröna knappen **Code** och välj **Download ZIP**.
-2. Packa upp ZIP-filen.
-3. Lägg hela mappen (`Common-Emergency-Meeting-Plugins-main`) i mappen
-   `plugins/` i Emergency Meeting.
-4. Starta om servern. Den skriver `Laddade pluginet Botplugin` när det fungerar.
+1. Click the green **Code** button and choose **Download ZIP**.
+2. Unpack the ZIP file.
+3. Put the whole folder (`Common-Emergency-Meeting-Plugins-main`) in the
+   `plugins/` folder in Emergency Meeting.
+4. Restart the server. The box **LOADING PLUGINS** shows `Botplugin` when it works.
 
 ```
 Emergency-Meeting-main/
@@ -52,16 +55,17 @@ Emergency-Meeting-main/
       botplugin.py
 ```
 
-Vill man bara ha ett av pluginen kan man också kopiera just den `.py`-filen
-direkt till `plugins/`.
+If you only want one of the plugins, you can also copy just that `.py` file
+directly to `plugins/`.
 
-Filer som börjar med `_` laddas inte. Byt namn på en fil till t.ex.
-`_botplugin.py` för att stänga av den utan att ta bort den.
+Files that start with `_` aren't loaded. Rename a file to for example
+`_botplugin.py` to turn it off without deleting it.
 
-## Göra ett nytt plugin
+## Making a new plugin
 
-Hur plugins fungerar, vilka händelser som finns och vad ett plugin kan göra
-står i [plugins/README.md i Emergency Meeting](https://github.com/xxMrMag1cxx/Emergency-Meeting/blob/main/plugins/README.md).
+How plugins work, which events there are and what a plugin can do is in
+[plugins/README.md in Emergency Meeting](https://github.com/xxMrMag1cxx/Emergency-Meeting/blob/main/plugins/README.md).
 
-Lägg nya plugins som egna `.py`-filer här i repot och skriv in dem i
-tabellen ovan.
+Put new plugins as their own `.py` files here in the repo and add them to
+the table above. Write everything in English, and add Swedish translations
+of the log messages in a `TRANSLATIONS` dictionary (see botplugin.py).
