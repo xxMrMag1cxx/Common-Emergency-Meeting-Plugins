@@ -83,6 +83,8 @@ this so that nobody is misled about how the project was made.
 
 ## License
 
+Copyright (C) 2026 xxMrMag1cxx
+
 The plugins are free software under the [GNU General Public License v3.0](LICENSE),
 the same license as Emergency Meeting.
 
